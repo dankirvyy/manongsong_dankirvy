@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Update User | System Console</title>
+    <title>Login | System Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -35,18 +35,6 @@
             background-size: 40px 40px;
         }
 
-        /* Animation */
-        @keyframes fadeSlideUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         .form-container {
             width: 90%;
             max-width: 500px;
@@ -60,7 +48,6 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            animation: fadeSlideUp 1s ease forwards;
         }
 
         h1 {
@@ -72,9 +59,6 @@
             text-shadow: var(--shadow-neon);
             letter-spacing: 2px;
             text-transform: uppercase;
-            opacity: 0;
-            animation: fadeSlideUp 1s ease forwards;
-            animation-delay: 0.2s;
         }
 
         form {
@@ -88,13 +72,7 @@
             display: flex;
             flex-direction: column;
             text-align: left;
-            opacity: 0;
-            animation: fadeSlideUp 0.8s ease forwards;
         }
-
-        .form-group:nth-child(1) { animation-delay: 0.4s; }
-        .form-group:nth-child(2) { animation-delay: 0.6s; }
-        .form-group:nth-child(3) { animation-delay: 0.8s; }
 
         label {
             font-size: 0.9rem;
@@ -106,7 +84,7 @@
         }
 
         input[type="text"],
-        input[type="email"] {
+        input[type="password"] {
             width: 100%;
             padding: 0.8rem 1rem;
             background-color: var(--color-input-bg);
@@ -120,10 +98,16 @@
         }
 
         input[type="text"]:focus,
-        input[type="email"]:focus {
+        input[type="password"]:focus {
             outline: none;
             border-color: var(--color-accent-neon);
             box-shadow: 0 0 5px var(--color-accent-neon);
+        }
+
+        .error {
+            color: var(--color-danger-neon);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
         }
 
         button[type="submit"] {
@@ -143,9 +127,6 @@
             letter-spacing: 1px;
             text-transform: uppercase;
             margin-top: 1rem;
-            opacity: 0;
-            animation: fadeSlideUp 0.8s ease forwards;
-            animation-delay: 1s;
         }
 
         button[type="submit"]:hover {
@@ -165,9 +146,6 @@
             border: 1px solid transparent;
             padding: 0.5rem 1rem;
             border-radius: 8px;
-            opacity: 0;
-            animation: fadeSlideUp 0.8s ease forwards;
-            animation-delay: 1.2s;
         }
 
         .back-link:hover {
@@ -179,26 +157,35 @@
 </head>
 <body>
     <div class="form-container">
-        <h1>// UPDATE USER_REC</h1>
-        <form action="<?=site_url('users/update/'.$user['id']);?>" method="post">
+        <h1>// LOGIN</h1>
+        <?php if(isset($error)): ?>
+            <div class="error"><?=$error;?></div>
+        <?php endif; ?>
+        <form action="<?=site_url('login');?>" method="post">
             <div class="form-group">
-                <label for="last_name">Last Name</label>
-                <input type="text" id="last_name" name="last_name" value="<?=html_escape($user['last_name']);?>" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="first_name">First Name</label>
-                <input type="text" id="first_name" name="first_name" value="<?=html_escape($user['first_name']);?>" required>
+                <label for="username">Username or Email</label>
+                <input type="text" id="username" name="username" required>
             </div>
 
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?=html_escape($user['email']);?>" required>
+            <div class="form-group" style="position: relative;">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+                <span id="togglePassword" style="position: absolute; right: 10px; top: 35px; cursor: pointer; color: var(--color-accent-neon); font-size: 1.2rem;">👁️</span>
             </div>
 
-            <button type="submit">Update Record</button>
+            <button type="submit">Login</button>
         </form>
-        <a href="<?=site_url('users/show');?>" class="back-link">// Back to Dashboard</a>
+        <a href="<?=site_url('register');?>" class="back-link">// Register</a>
     </div>
+    <script>
+        const togglePassword = document.getElementById('togglePassword');
+        const password = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
+    </script>
 </body>
 </html>

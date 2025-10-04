@@ -7,6 +7,7 @@ class UserController extends Controller {
         parent::__construct();
         $this->call->database();
         $this->call->model('UserModel');
+        $this->call->library('Session');
     }
 
     public function show(){
@@ -42,7 +43,8 @@ class UserController extends Controller {
 
         // Send data to view
         $data['page'] = $this->pagination->paginate();
-        $this->call->view('show', $data);
+        $data['current_role'] = $this->session->userdata('role') ?? 'user';
+        $this->call->view('students/show', $data);
     }
 
     public function create() {
@@ -61,7 +63,7 @@ class UserController extends Controller {
                 echo 'Something went wrong';
             }
         } else {
-            $this->call->view('create');
+            $this->call->view('students/create');
         }
     }
 
@@ -82,7 +84,7 @@ class UserController extends Controller {
                 echo 'Something went wrong';
             }
         } else {
-            $this->call->view('update', $data);
+            $this->call->view('students/update', $data);
         }
     }
 
@@ -92,5 +94,55 @@ class UserController extends Controller {
         } else {
             echo 'Something went wrong';
         }
+    }
+
+    public function login() {
+        if ($this->io->method() == 'post') {
+            $username = $this->io->post('username');
+            $password = $this->io->post('password');
+
+            $user = $this->UserModel->login($username, $password);
+            if ($user) {
+                $this->session->set_userdata('user_id', $user['id']);
+                $this->session->set_userdata('username', $user['username']);
+                $this->session->set_userdata('role', $user['role']);
+                redirect('users/show');
+            } else {
+                $data['error'] = 'Invalid username or password';
+                $this->call->view('user_auth/login', $data);
+            }
+        } else {
+            $this->call->view('user_auth/login');
+        }
+    }
+
+    public function register() {
+        if ($this->io->method() == 'post') {
+            $username = $this->io->post('username');
+            $email = $this->io->post('email');
+            $password = $this->io->post('password');
+            $role = $this->io->post('role') ?? 'user'; // get role from form or default to user
+
+            $data = [
+                'username' => $username,
+                'email' => $email,
+                'password' => $password,
+                'role' => $role
+            ];
+
+            if ($this->UserModel->register($data)) {
+                redirect('login');
+            } else {
+                $data['error'] = 'Registration failed. Please try again.';
+                $this->call->view('user_auth/register', $data);
+            }
+        } else {
+            $this->call->view('user_auth/register');
+        }
+    }
+
+    public function logout() {
+        $this->session->sess_destroy();
+        redirect('login');
     }
 }

@@ -53,6 +53,7 @@
             padding: 2.5rem;
             border-radius: 12px;
             position: relative;
+            padding-bottom: 5rem; 
         }
 
         h1 {
@@ -67,10 +68,24 @@
             text-transform: uppercase;
         }
 
+        .header-controls-container {
+            display: flex;
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
         .search-container {
             display: flex;
-            justify-content: center;
-            margin-bottom: 1.5rem;
+            align-items: center;
+            flex-grow: 1; 
+            max-width: 600px; 
+        }
+        
+        .search-form {
+             display:flex; 
+             align-items:center; 
+             width:100%;
         }
 
         #searchBox {
@@ -137,10 +152,23 @@
             background-color: var(--color-table-header-bg);
         }
         
+        /* UPDATED: Center the text in ALL header cells */
         th {
             font-weight: 700;
             color: var(--color-accent-neon);
             text-transform: uppercase;
+            text-align: center; /* This centers all the table headers */
+        }
+        
+        /* You might want to center the data cells too for a fully centered column look */
+        /* If you want the data (ID, Names, Email) left-aligned, remove the following CSS block */
+        tbody td:not(:last-child) {
+            text-align: center;
+        }
+
+        /* Keep the Action links readable by left-aligning the last cell (the actions column) */
+        td:last-child {
+            text-align: center; 
         }
 
         tr {
@@ -181,7 +209,6 @@
 
         .create-record-btn {
             display: inline-block;
-            margin-top: 2rem;
             padding: 0.75rem 1.5rem;
             background-color: transparent;
             color: var(--color-accent-neon);
@@ -194,6 +221,7 @@
             text-shadow: 0 0 5px var(--color-accent-neon);
             box-shadow: 0 0 10px rgba(0, 255, 128, 0.4);
             text-transform: uppercase;
+            white-space: nowrap; 
         }
 
         .create-record-btn:hover {
@@ -240,24 +268,59 @@
             box-shadow: 0 0 20px var(--color-accent-neon);
             cursor: default;
         }
+        
+        .logout-container {
+            position: absolute;
+            bottom: 1.5rem; 
+            right: 2.5rem; 
+            z-index: 10;
+        }
+        
+        .logout-btn {
+            background-color: var(--color-accent-pink); 
+            border-color: var(--color-accent-pink) !important; 
+            box-shadow: 0 0 10px rgba(255, 51, 102, 0.4) !important;
+            color: var(--color-bg-primary); 
+            font-family: var(--font-display);
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-shadow: none; 
+            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background-color: #ff5e8c !important; 
+            box-shadow: 0 0 20px rgba(255, 51, 102, 0.8) !important;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>User Data Grid // Access Terminal</h1>
         
-        <!-- Server-side search form -->
-        <div class="search-container">
-            <form action="<?= site_url('users/show'); ?>" method="get" style="display:flex; align-items:center; width:100%;">
-                <?php
-                $q = '';
-                if(isset($_GET['q'])) {
-                    $q = $_GET['q'];
-                }
-                ?>
-                <input type="text" name="q" placeholder="Search records..." value="<?= html_escape($q); ?>" id="searchBox">
-                <button type="submit" class="search-btn">Search</button>
-            </form>
+        <div class="header-controls-container">
+            <div class="search-container">
+                <form action="<?= site_url('users/show'); ?>" method="get" class="search-form">
+                    <?php
+                    $q = '';
+                    if(isset($_GET['q'])) {
+                        $q = $_GET['q'];
+                    }
+                    ?>
+                    <input type="text" name="q" placeholder="Search records..." value="<?= html_escape($q); ?>" id="searchBox">
+                    <button type="submit" class="search-btn">Search</button>
+                </form>
+            </div>
+            
+            <?php 
+                $current_role = isset($_SESSION['role']) ? $_SESSION['role'] : ''; 
+            ?>
+            <?php if ($current_role === 'admin'): ?>
+            <a href="<?= site_url('users/create'); ?>" class="create-record-btn" style="margin-left: 2rem;">Create New Record</a>
+            <?php endif; ?>
         </div>
         
         <div class="table-responsive">
@@ -274,9 +337,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    $current_role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
-                    foreach (html_escape($users) as $user): ?>
+                    <?php foreach (html_escape($users) as $user): ?>
                         <tr>
                             <td><?= $user['id']; ?></td>
                             <td><?= $user['last_name']; ?></td>
@@ -296,19 +357,14 @@
             </table>
         </div>
 
-        <!-- Pagination links -->
         <div class="pagination-container">
             <?php if (isset($page)) echo $page; ?>
         </div>
         
-        <div style="text-align: center;">
-            <a href="<?= site_url('users/create'); ?>" class="create-record-btn">Create New Record</a>
-        </div>
-
-        <div style="text-align: center; margin-top: 1rem;">
+        <div class="logout-container">
             <?php if (isset($_SESSION['user_id'])): ?>
                 <form action="<?= site_url('logout'); ?>" method="post" style="display: inline;">
-                    <button type="submit" class="create-record-btn" style="background-color: var(--color-accent-pink); border-color: var(--color-accent-pink); box-shadow: 0 0 10px rgba(255, 51, 102, 0.4);">
+                    <button type="submit" class="logout-btn">
                         Logout
                     </button>
                 </form>

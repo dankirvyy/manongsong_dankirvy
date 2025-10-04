@@ -265,8 +265,11 @@ class Pagination
         $html .= $this->build_link($this->page_array['previous'], $this->prev_link);
 
         foreach ($this->page_array['pages'] as $page) {
-            $active = ($page == $this->page_array['current']) ? $this->classes['active'] : '';
-            $html .= $this->build_link($page, $page, $active);
+            if ($page == $this->page_array['current']) {
+                $html .= '<li class="'.$this->classes['li'].'"><strong class="'.$this->classes['a'].' '.$this->classes['active'].'">'.$page.'</strong></li>';
+            } else {
+                $html .= $this->build_link($page, $page);
+            }
         }
 
         $html .= $this->build_link($this->page_array['next'], $this->next_link);
