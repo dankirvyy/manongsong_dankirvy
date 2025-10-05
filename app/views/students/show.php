@@ -1,375 +1,373 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Data Grid | System Console</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Data Grid | System Console</title>
+  
+  <!-- Font + Icons (same as Login/Register) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style>
-        /*
-        -- CSS Variables for a centralized theme --
-        */
-        :root {
-            --color-bg-primary: #0a0a0a;
-            --color-bg-secondary: rgba(18, 18, 18, 0.7);
-            --color-text-primary: #f0f0f0;
-            --color-accent-neon: #00ff80;
-            --color-accent-pink: #ff3366;
-            --color-border: #333;
-            --color-input-bg: #181818;
-            --color-table-header-bg: #1e1e1e;
-            --color-table-row-hover: #1e1e1e;
-            --font-display: 'Orbitron', sans-serif;
-            --font-mono: 'Roboto Mono', monospace;
-            --shadow-neon: 0 0 10px rgba(0, 255, 128, 0.5);
-            --shadow-neon-pink: 0 0 10px rgba(255, 51, 102, 0.5);
-        }
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  
+  <style>
+  :root {
+    --color-bg: #000;
+    --color-panel: #0d0d0d;
+    --color-border: #00ff99;
+    --color-text-primary: #fff;
+    --color-accent-neon: #00ff99;
+    --color-accent-pink: #ff3366;
+    --color-input-bg: #1a1a1a;
+    --color-hover: #111;
+    --font-title: 'Orbitron', sans-serif;
+    --font-mono: 'Source Code Pro', monospace;
+  }
 
-        body {
-            background-color: var(--color-bg-primary);
-            color: var(--color-text-primary);
-            font-family: var(--font-mono);
-            margin: 0;
-            padding: 2rem 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            background-image:
-                linear-gradient(to right, rgba(0, 255, 128, 0.07) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(0, 255, 128, 0.07) 1px, transparent 1px);
-            background-size: 40px 40px;
-        }
+  body {
+    background-color: var(--color-bg);
+    background-image: radial-gradient(circle at center, #001a0a 0%, #000 80%);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin: 0;
+    padding: 3rem 1rem;
+  }
 
-        .container {
-            width: 100%;
-            max-width: 1200px;
-            margin-top: 2rem;
-            background: var(--color-bg-secondary);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--color-border);
-            box-shadow: var(--shadow-neon);
-            padding: 2.5rem;
-            border-radius: 12px;
-            position: relative;
-            padding-bottom: 5rem; 
-        }
+  .container {
+    background-color: var(--color-panel);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 0 25px var(--color-accent-neon);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1200px;
+    padding: 2.5rem 3rem;
+    position: relative;
+    backdrop-filter: blur(6px);
+  }
 
-        h1 {
-            font-family: var(--font-display);
-            font-size: clamp(1.5rem, 5vw, 2.5rem);
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 2rem;
-            color: var(--color-accent-neon);
-            text-shadow: var(--shadow-neon);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
+  h1 {
+    font-family: var(--font-title);
+    color: var(--color-accent-neon);
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px var(--color-accent-neon);
+    margin-bottom: 2rem;
+  }
 
-        .header-controls-container {
-            display: flex;
-            justify-content: space-between; 
-            align-items: center;
-            margin-bottom: 1.5rem;
-        }
+  /* Header: Search + Create Button */
+  .header-controls-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.8rem;
+    gap: 1rem;
+  }
 
-        .search-container {
-            display: flex;
-            align-items: center;
-            flex-grow: 1; 
-            max-width: 600px; 
-        }
-        
-        .search-form {
-             display:flex; 
-             align-items:center; 
-             width:100%;
-        }
+  .search-container {
+    flex: 1;
+    max-width: 500px;
+  }
 
-        #searchBox {
-            width: 100%;
-            padding: 0.7rem 1rem;
-            border-radius: 6px;
-            border: 1px solid var(--color-border);
-            background: var(--color-input-bg);
-            color: var(--color-text-primary);
-            font-family: var(--font-mono);
-            font-size: 1rem;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
+  .search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
 
-        #searchBox:focus {
-            outline: none;
-            border-color: var(--color-accent-neon);
-            box-shadow: 0 0 5px var(--color-accent-neon);
-        }
+  #searchBox {
+    flex: 1;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    background-color: var(--color-input-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    transition: 0.3s ease;
+  }
 
-        .search-btn {
-            padding: 0.7rem 1.2rem;
-            border: 2px solid var(--color-accent-neon);
-            background: transparent;
-            color: var(--color-accent-neon);
-            font-family: var(--font-display);
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 6px;
-            cursor: pointer;
-            text-shadow: 0 0 5px var(--color-accent-neon);
-            box-shadow: 0 0 10px rgba(0, 255, 128, 0.4);
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-            margin-left: 0.5rem;
-        }
+  #searchBox:focus {
+    outline: none;
+    border-color: var(--color-accent-neon);
+    box-shadow: 0 0 8px var(--color-accent-neon);
+  }
 
-        .search-btn:hover {
-            background-color: var(--color-accent-neon);
-            color: var(--color-bg-primary);
-            box-shadow: 0 0 20px var(--color-accent-neon);
-        }
+  .search-btn {
+    padding: 0.8rem 1.2rem;
+    border-radius: 8px;
+    font-family: var(--font-title);
+    border: 2px solid var(--color-accent-neon);
+    background: transparent;
+    color: var(--color-accent-neon);
+    cursor: pointer;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--color-accent-neon);
+    transition: 0.3s ease;
+  }
 
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
+  .search-btn:hover {
+    background-color: var(--color-accent-neon);
+    color: #000;
+    box-shadow: 0 0 20px var(--color-accent-neon);
+  }
 
-        table {
-            width: 100%;
-            min-width: 600px;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 0.95rem;
-            border-radius: 8px;
-        }
+  .create-record-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    font-family: var(--font-title);
+    border: 2px solid var(--color-accent-neon);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--color-accent-neon);
+    text-decoration: none;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px var(--color-accent-neon);
+    transition: 0.3s ease;
+  }
 
-        th, td {
-            padding: 1rem;
-            border-bottom: 1px solid var(--color-border);
-        }
+  .create-record-btn:hover {
+    background-color: var(--color-accent-neon);
+    color: #000;
+    box-shadow: 0 0 20px var(--color-accent-neon);
+  }
 
-        thead {
-            background-color: var(--color-table-header-bg);
-        }
-        
-        /* UPDATED: Center the text in ALL header cells */
-        th {
-            font-weight: 700;
-            color: var(--color-accent-neon);
-            text-transform: uppercase;
-            text-align: center; /* This centers all the table headers */
-        }
-        
-        /* You might want to center the data cells too for a fully centered column look */
-        /* If you want the data (ID, Names, Email) left-aligned, remove the following CSS block */
-        tbody td:not(:last-child) {
-            text-align: center;
-        }
+  /* Table Styling */
+  .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    border-radius: 8px;
+  }
 
-        /* Keep the Action links readable by left-aligning the last cell (the actions column) */
-        td:last-child {
-            text-align: center; 
-        }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
 
-        tr {
-            transition: background-color 0.3s ease;
-        }
-        
-        tbody tr:hover {
-            background-color: var(--color-table-row-hover);
-            box-shadow: inset 2px 0 0 0 var(--color-accent-neon);
-        }
+  thead {
+    background-color: #111;
+  }
 
-        .action-links {
-            white-space: nowrap;
-        }
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    text-align: center;
+    white-space: nowrap;
+  }
 
-        .action-links a {
-            text-decoration: none;
-            color: var(--color-accent-neon);
-            font-weight: 700;
-            padding: 0.25rem 0.5rem;
-            border: 1px solid transparent;
-            transition: all 0.2s ease-in-out;
-        }
-        
-        .action-links a:hover {
-            border-color: var(--color-accent-neon);
-            box-shadow: 0 0 5px var(--color-accent-neon);
-        }
+  th {
+    color: var(--color-accent-neon);
+    font-family: var(--font-title);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+  }
 
-        .action-links a.delete-link {
-            color: var(--color-accent-pink);
-        }
-        
-        .action-links a.delete-link:hover {
-            border-color: var(--color-accent-pink);
-            box-shadow: var(--shadow-neon-pink);
-        }
+  tr:hover {
+    background-color: var(--color-hover);
+    transition: background 0.3s ease;
+  }
 
-        .create-record-btn {
-            display: inline-block;
-            padding: 0.75rem 1.5rem;
-            background-color: transparent;
-            color: var(--color-accent-neon);
-            text-decoration: none;
-            border: 2px solid var(--color-accent-neon);
-            border-radius: 8px;
-            font-weight: 700;
-            font-family: var(--font-display);
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-            text-shadow: 0 0 5px var(--color-accent-neon);
-            box-shadow: 0 0 10px rgba(0, 255, 128, 0.4);
-            text-transform: uppercase;
-            white-space: nowrap; 
-        }
+  .action-links a {
+    color: var(--color-accent-neon);
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s ease;
+  }
 
-        .create-record-btn:hover {
-            background-color: var(--color-accent-neon);
-            color: var(--color-bg-primary);
-            box-shadow: 0 0 20px var(--color-accent-neon);
-        }
+  .action-links a:hover {
+    text-shadow: 0 0 8px var(--color-accent-neon);
+  }
 
-        .pagination-container {
-            margin-top: 20px;
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
+  .action-links .delete-link {
+    color: var(--color-accent-pink);
+  }
 
-        .pagination-container a,
-        .pagination-container strong {
-            display: inline-block;
-            padding: 0.6rem 1.2rem;
-            border: 2px solid var(--color-accent-neon);
-            background: transparent;
-            color: var(--color-accent-neon);
-            font-family: var(--font-display);
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 6px;
-            text-decoration: none;
-            text-shadow: 0 0 5px var(--color-accent-neon);
-            box-shadow: 0 0 10px rgba(0, 255, 128, 0.4);
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        }
+  .action-links .delete-link:hover {
+    text-shadow: 0 0 8px var(--color-accent-pink);
+  }
 
-        .pagination-container a:hover {
-            background-color: var(--color-accent-neon);
-            color: var(--color-bg-primary);
-            box-shadow: 0 0 20px var(--color-accent-neon);
-        }
+  /* Pagination */
+  .pagination-container {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
 
-        .pagination-container strong {
-            background-color: var(--color-accent-neon);
-            color: var(--color-bg-primary);
-            box-shadow: 0 0 20px var(--color-accent-neon);
-            cursor: default;
-        }
-        
-        .logout-container {
-            position: absolute;
-            bottom: 1.5rem; 
-            right: 2.5rem; 
-            z-index: 10;
-        }
-        
-        .logout-btn {
-            background-color: var(--color-accent-pink); 
-            border-color: var(--color-accent-pink) !important; 
-            box-shadow: 0 0 10px rgba(255, 51, 102, 0.4) !important;
-            color: var(--color-bg-primary); 
-            font-family: var(--font-display);
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            text-shadow: none; 
-            transition: background-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background-color: #ff5e8c !important; 
-            box-shadow: 0 0 20px rgba(255, 51, 102, 0.8) !important;
-        }
-    </style>
+  .pagination-container a,
+  .pagination-container strong {
+    padding: 0.6rem 1.2rem;
+    border: 2px solid var(--color-accent-neon);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--color-accent-neon);
+    font-family: var(--font-title);
+    text-transform: uppercase;
+    transition: 0.3s ease;
+    text-shadow: 0 0 6px var(--color-accent-neon);
+  }
+
+  .pagination-container a:hover {
+    background-color: var(--color-accent-neon);
+    color: #000;
+    box-shadow: 0 0 15px var(--color-accent-neon);
+  }
+
+  .pagination-container strong {
+    background-color: var(--color-accent-neon);
+    color: #000;
+    box-shadow: 0 0 15px var(--color-accent-neon);
+  }
+
+  /* Logout Button */
+  .logout-container {
+    position: absolute;
+    top: 1.8rem;
+    right: 2.5rem;
+  }
+
+  .logout-btn {
+    background-color: var(--color-accent-pink);
+    border: 2px solid var(--color-accent-pink);
+    color: #000;
+    font-family: var(--font-title);
+    text-transform: uppercase;
+    border-radius: 8px;
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+    font-weight: 700;
+  }
+
+  .logout-btn:hover {
+    background-color: #ff5e8c;
+    box-shadow: 0 0 20px var(--color-accent-pink);
+  }
+
+  /* ✅ Responsive Fixes */
+  @media (max-width: 992px) {
+    .container {
+      padding: 2rem;
+    }
+
+    .logout-container {
+      position: relative;
+      top: auto;
+      right: auto;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    .logout-btn {
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .header-controls-container {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .create-record-btn {
+      text-align: center;
+    }
+
+    th, td {
+      padding: 0.8rem;
+      font-size: 0.85rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 1.4rem;
+    }
+
+    .search-btn {
+      padding: 0.6rem 1rem;
+    }
+
+    .pagination-container a,
+    .pagination-container strong {
+      padding: 0.5rem 0.8rem;
+      font-size: 0.8rem;
+    }
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>User Data Grid // Access Terminal</h1>
-        
-        <div class="header-controls-container">
-            <div class="search-container">
-                <form action="<?= site_url('users/show'); ?>" method="get" class="search-form">
-                    <?php
-                    $q = '';
-                    if(isset($_GET['q'])) {
-                        $q = $_GET['q'];
-                    }
-                    ?>
-                    <input type="text" name="q" placeholder="Search records..." value="<?= html_escape($q); ?>" id="searchBox">
-                    <button type="submit" class="search-btn">Search</button>
-                </form>
-            </div>
-            
-            <?php 
-                $current_role = isset($_SESSION['role']) ? $_SESSION['role'] : ''; 
-            ?>
-            <?php if ($current_role === 'admin'): ?>
-            <a href="<?= site_url('users/create'); ?>" class="create-record-btn" style="margin-left: 2rem;">Create New Record</a>
-            <?php endif; ?>
-        </div>
-        
-        <div class="table-responsive">
-            <table id="studentsTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Last Name</th>
-                        <th>First Name</th>
-                        <th>Email</th>
-                        <?php if ($current_role === 'admin'): ?>
-                        <th>Action</th>
-                        <?php endif; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach (html_escape($users) as $user): ?>
-                        <tr>
-                            <td><?= $user['id']; ?></td>
-                            <td><?= $user['last_name']; ?></td>
-                            <td><?= $user['first_name']; ?></td>
-                            <td><?= $user['email']; ?></td>
-                            <?php if ($current_role === 'admin'): ?>
-                            <td class="action-links">
-                                <a href="<?= site_url('users/update/'.$user['id']); ?>">Update</a> |
-                                <a href="<?= site_url('users/delete/'.$user['id']); ?>" class="delete-link" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
-                            </td>
-                            <?php else: ?>
-                            <td></td>
-                            <?php endif; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
+  <div class="container">
+    <h1>User Data Grid // Access Terminal</h1>
+    
+    <div class="header-controls-container">
+      <div class="search-container">
+        <form action="<?= site_url('users/show'); ?>" method="get" class="search-form">
+          <?php $q = isset($_GET['q']) ? $_GET['q'] : ''; ?>
+          <input type="text" name="q" placeholder="Search records..." value="<?= html_escape($q); ?>" id="searchBox">
+          <button type="submit" class="search-btn">Search</button>
+        </form>
+      </div>
 
-        <div class="pagination-container">
-            <?php if (isset($page)) echo $page; ?>
-        </div>
-        
-        <div class="logout-container">
-            <?php if (isset($_SESSION['user_id'])): ?>
-                <form action="<?= site_url('logout'); ?>" method="post" style="display: inline;">
-                    <button type="submit" class="logout-btn">
-                        Logout
-                    </button>
-                </form>
-            <?php endif; ?>
-        </div>
+      <?php $current_role = isset($_SESSION['role']) ? $_SESSION['role'] : ''; ?>
+      <?php if ($current_role === 'admin'): ?>
+      <a href="<?= site_url('users/create'); ?>" class="create-record-btn">Create New Record</a>
+      <?php endif; ?>
     </div>
+
+    <div class="table-responsive">
+      <table id="studentsTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Last Name</th>
+            <th>First Name</th>
+            <th>Email</th>
+            <?php if ($current_role === 'admin'): ?>
+            <th>Action</th>
+            <?php endif; ?>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach (html_escape($users) as $user): ?>
+          <tr>
+            <td><?= $user['id']; ?></td>
+            <td><?= $user['last_name']; ?></td>
+            <td><?= $user['first_name']; ?></td>
+            <td><?= $user['email']; ?></td>
+            <?php if ($current_role === 'admin'): ?>
+            <td class="action-links">
+              <a href="<?= site_url('users/update/'.$user['id']); ?>">Update</a> |
+              <a href="<?= site_url('users/delete/'.$user['id']); ?>" class="delete-link" onclick="return confirm('Are you sure you want to delete this record?');">Delete</a>
+            </td>
+            <?php endif; ?>
+          </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination-container">
+      <?php if (isset($page)) echo $page; ?>
+    </div>
+
+    <div class="logout-container">
+      <?php if (isset($_SESSION['user_id'])): ?>
+      <form action="<?= site_url('logout'); ?>" method="post" style="display: inline;">
+        <button type="submit" class="logout-btn">Logout</button>
+      </form>
+      <?php endif; ?>
+    </div>
+  </div>
 </body>
 </html>
